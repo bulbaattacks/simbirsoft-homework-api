@@ -1,6 +1,5 @@
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.parsing.Parser;
 import org.junit.jupiter.api.*;
 import org.zubova.pojo.Entity;
 import org.zubova.util.PropertiesLoader;
@@ -8,14 +7,11 @@ import org.zubova.util.PropertiesLoader;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.hasSize;
+import static org.zubova.service.ApiService.*;
 
 class ApiTest {
-    private static final String CREATE_PATH = "/api/create";
-    private static final String DELETE_PATH = "/api/delete/%s";
-    private static final String GET_PATH = "/api/get/%s";
-    private static final String GET_ALL_PATH = "/api/getAll";
-    private static final String PATCH_PATH = "/api/patch/%s";
 
     @BeforeAll
     static void beforeAll() {
@@ -37,9 +33,9 @@ class ApiTest {
         for (var entity : allEntities) {
             given()
                     .when()
-                    .delete(DELETE_PATH.formatted(entity.getId()))
+                    .delete(DELETE_PATH, entity.getId())
                     .then()
-                    .statusCode(204);
+                    .statusCode(SC_NO_CONTENT);
         }
     }
 
@@ -60,9 +56,9 @@ class ApiTest {
 
         given()
                 .when()
-                .delete(DELETE_PATH.formatted(id))
+                .delete(DELETE_PATH, id)
                 .then()
-                .statusCode(204);
+                .statusCode(SC_NO_CONTENT);
     }
 
     @Test
@@ -73,11 +69,16 @@ class ApiTest {
 
         var resultEntity = getEntityBy(id);
 
-        Assertions.assertEquals(entity.getTitle(), resultEntity.getTitle());
-        Assertions.assertEquals(entity.getVerified(), resultEntity.getVerified());
-        Assertions.assertEquals(entity.getAddition().getAdditionalInfo(), resultEntity.getAddition().getAdditionalInfo());
-        Assertions.assertEquals(entity.getAddition().getAdditionalNumber(), resultEntity.getAddition().getAdditionalNumber());
-        Assertions.assertTrue(resultEntity.getImportantNumbers().containsAll(entity.getImportantNumbers()));
+        Assertions.assertEquals(entity.getTitle(), resultEntity.getTitle(),
+                "Поле title не совпадает с ожидаемым значением");
+        Assertions.assertEquals(entity.getVerified(), resultEntity.getVerified(),
+                "Поле verified не совпадает с ожидаемым значением");
+        Assertions.assertEquals(entity.getAddition().getAdditionalInfo(), resultEntity.getAddition().getAdditionalInfo(),
+                "Поле additionalInfo не совпадает с ожидаемым значением");
+        Assertions.assertEquals(entity.getAddition().getAdditionalNumber(), resultEntity.getAddition().getAdditionalNumber(),
+                "Поле additionalNumber не совпадает с ожидаемым значением");
+        Assertions.assertTrue(resultEntity.getImportantNumbers().containsAll(entity.getImportantNumbers()),
+                "Поле importantNumbers не совпадает с ожидаемым значением");
     }
 
     @Test
@@ -92,7 +93,7 @@ class ApiTest {
                 .when()
                 .get(GET_ALL_PATH)
                 .then()
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .assertThat()
                 .body("entity", hasSize(2));
     }
@@ -111,32 +112,8 @@ class ApiTest {
                 .contentType(ContentType.JSON)
                 .body(entityForPatch)
                 .when()
-                .patch(PATCH_PATH.formatted(id))
+                .patch(PATCH_PATH, id)
                 .then()
-                .statusCode(204);
-    }
-
-    private static Integer createAndGetId(Entity entity) {
-        RestAssured.registerParser("text/plain", Parser.JSON);
-        return given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.TEXT)
-                .body(entity)
-                .when()
-                .post(CREATE_PATH)
-                .then()
-                .statusCode(200)
-                .extract()
-                .as(Integer.class);
-    }
-
-    private static Entity getEntityBy(Integer id) {
-        return given()
-                .when()
-                .get(GET_PATH.formatted(id))
-                .then()
-                .statusCode(200)
-                .extract()
-                .as(Entity.class);
+                .statusCode(SC_NO_CONTENT);
     }
 }

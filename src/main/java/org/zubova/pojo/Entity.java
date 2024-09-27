@@ -6,8 +6,7 @@ import lombok.*;
 import java.util.Arrays;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,8 +22,7 @@ public class Entity {
     @JsonProperty("important_numbers")
     private List<Integer> importantNumbers = Arrays.asList(1, 2, 3);
 
-    @Getter
-    @Setter
+    @Data
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
