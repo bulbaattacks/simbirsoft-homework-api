@@ -12,14 +12,19 @@ jobs:
       browserName: ci
 
     steps:
-      - name: Checkout code
+      - name: Checkout Test service
         uses: actions/checkout@v4
 
-      - name: Checkout api
-#        uses: actions/checkout@v4
+      - name: Checkout Api service
+        uses: actions/checkout@v4
         with:
             repository: sun6r0/test-service
-        run: docker-compose up --build -d
+            path: ./api
+
+      - name: Run Api service
+        run: |
+          cd api
+          docker-compose up --build -d
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
