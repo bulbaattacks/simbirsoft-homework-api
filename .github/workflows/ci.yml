@@ -24,7 +24,7 @@ jobs:
       - name: Run Api service
         run: |
           cd api
-          docker-compose up --build -d
+          docker compose up --build -d
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
