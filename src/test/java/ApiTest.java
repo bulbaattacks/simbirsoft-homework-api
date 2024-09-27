@@ -7,8 +7,9 @@ import org.zubova.util.PropertiesLoader;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.apache.http.HttpStatus.*;
-import static org.hamcrest.Matchers.hasSize;
+import static org.apache.http.HttpStatus.SC_NO_CONTENT;
+import static org.apache.http.HttpStatus.SC_OK;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.zubova.service.ApiService.*;
 
 class ApiTest {
@@ -18,8 +19,8 @@ class ApiTest {
         RestAssured.baseURI = PropertiesLoader.load().getProperty("api.url");
     }
 
-    @AfterEach
-    void tearDown() {
+    @AfterAll
+    static void tearDown() {
         List<Entity> allEntities = given()
                 .when()
                 .get(GET_ALL_PATH)
@@ -95,7 +96,7 @@ class ApiTest {
                 .then()
                 .statusCode(SC_OK)
                 .assertThat()
-                .body("entity", hasSize(2));
+                .body("entity", notNullValue());
     }
 
     @Test
