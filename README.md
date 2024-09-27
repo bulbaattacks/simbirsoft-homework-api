@@ -1,4 +1,4 @@
-#### Тестируемый объект: https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager
+#### Тестируемый объект: https://github.com/sun6r0/test-service
 
 #### Стек проекта:
 - Java 17
@@ -42,6 +42,9 @@
 2. Отправить GET-запрос на http://localhost:8080/api/getAll . 
 3. Проверить код состояния. 
 4. Проверить длину массива из responce.
+
+#### Ожидаемый результат:
+1. Статус 200.
 
 ### 5. Обновление сущности
 #### Шаги:
