@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Checkout api
-        uses: actions/checkout@v4
+#        uses: actions/checkout@v4
         with:
             repository: sun6r0/test-service
         run: docker-compose up --build -d
