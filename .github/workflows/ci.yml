@@ -1,0 +1,46 @@
+name: 'Api'
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+jobs:
+  test-job:
+    runs-on: ubuntu-latest
+    env:
+      browserName: ci
+
+    steps:
+      - name: Checkout Test service
+        uses: actions/checkout@v4
+
+      - name: Checkout Api service
+        uses: actions/checkout@v4
+        with:
+            repository: sun6r0/test-service
+            path: ./api
+
+      - name: Run Api service
+        run: |
+          cd api
+          docker compose up --build -d
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Install dependencies
+        run: mvn install -DskipTests
+
+      - name: Run tests
+        run: mvn test
+
+      - name: Archive test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: target/surefire-reports/
